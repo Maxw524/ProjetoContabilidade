@@ -1,0 +1,170 @@
+﻿@model ProjetoContabilidade.Models.Empresa
+
+@{
+    ViewData["Title"] = "Detalhes da Empresa";
+}
+
+<div class="container">
+    <h2>@Model.RazaoSocial</h2>
+    <p><strong>CNPJ:</strong> @Model.CNPJ</p>
+    <p><strong>Contador:</strong> @Model.Contador?.Nome</p>
+
+    <hr />
+
+    <!-- Tabs para informações detalhadas -->
+    <ul class="nav nav-tabs" id="empresaTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="socio-tab" data-bs-toggle="tab" data-bs-target="#socios" type="button" role="tab">
+                Sócios
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="lucro-tab" data-bs-toggle="tab" data-bs-target="#lucros" type="button" role="tab">
+                Distribuição de Lucros
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="observacao-tab" data-bs-toggle="tab" data-bs-target="#observacoes" type="button" role="tab">
+                Observações
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="pagamento-tab" data-bs-toggle="tab" data-bs-target="#pagamentos" type="button" role="tab">
+                Pagamentos
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content mt-3" id="empresaTabContent">
+        <!-- Tab Sócios -->
+        <div class="tab-pane fade show active" id="socios" role="tabpanel">
+            <div class="mb-3">
+                <input type="text" class="form-control" placeholder="Pesquisar sócios..." id="pesquisaSocios" onkeyup="filterTable('pesquisaSocios','tabelaSocios')">
+            </div>
+            <table class="table table-striped" id="tabelaSocios">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>CPF</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var socio in Model.Socios ?? new List<ProjetoContabilidade.Models.Socio>())
+                    {
+                        <tr>
+                            <td>@socio.Nome</td>
+                            <td>@socio.CPF</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Tab Distribuição de Lucros -->
+        <div class="tab-pane fade" id="lucros" role="tabpanel">
+            <div class="mb-3">
+                <input type="text" class="form-control" placeholder="Pesquisar lucros..." id="pesquisaLucros" onkeyup="filterTable('pesquisaLucros','tabelaLucros')">
+            </div>
+            <table class="table table-striped" id="tabelaLucros">
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Valor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var lucro in Model.DistribuicoesLucro ?? new List<ProjetoContabilidade.Models.DistribuicaoLucro>())
+                    {
+                        <tr>
+                            <td>@lucro.Data.ToShortDateString()</td>
+                            <td>@lucro.Valor.ToString("C")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Tab Observações -->
+        <div class="tab-pane fade" id="observacoes" role="tabpanel">
+            <div class="mb-3">
+                <input type="text" class="form-control" placeholder="Pesquisar observações..." id="pesquisaObservacoes" onkeyup="filterTable('pesquisaObservacoes','tabelaObservacoes')">
+            </div>
+            <table class="table table-striped" id="tabelaObservacoes">
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Observação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var obs in Model.Observacoes ?? new List<ProjetoContabilidade.Models.Observacao>())
+                    {
+                        <tr>
+                            <td>@obs.Data.ToShortDateString()</td>
+                            <td>@obs.Texto</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <hr />
+            <h5>Adicionar Observação</h5>
+            <!-- Formulário simples para cadastro de observação -->
+            <form asp-action="AdicionarObservacao" method="post">
+                <input type="hidden" name="EmpresaId" value="@Model.Id" />
+                <div class="mb-3">
+                    <textarea name="Texto" class="form-control" rows="3" placeholder="Digite a nova observação"></textarea>
+                </div>
+                <button type="submit" class="btn btn-success">Salvar Observação</button>
+            </form>
+        </div>
+
+        <!-- Tab Pagamentos -->
+        <div class="tab-pane fade" id="pagamentos" role="tabpanel">
+            <div class="mb-3">
+                <input type="text" class="form-control" placeholder="Pesquisar pagamentos..." id="pesquisaPagamentos" onkeyup="filterTable('pesquisaPagamentos','tabelaPagamentos')">
+            </div>
+            <table class="table table-striped" id="tabelaPagamentos">
+                <thead>
+                    <tr>
+                        <th>Tipo</th>
+                        <th>Valor</th>
+                        <th>Data Vencimento</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var pgto in Model.Pagamentos ?? new List<ProjetoContabilidade.Models.Pagamento>())
+                    {
+                        <tr>
+                            <td>@pgto.Tipo</td>
+                            <td>@pgto.Valor.ToString("C")</td>
+                            <td>@pgto.DataVencimento.ToShortDateString()</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Script simples para filtrar as tabelas -->
+<script>
+    function filterTable(inputId, tableId) {
+        var input = document.getElementById(inputId);
+        var filter = input.value.toLowerCase();
+        var table = document.getElementById(tableId);
+        var trs = table.getElementsByTagName("tr");
+
+        for (var i = 1; i < trs.length; i++) { // começa em 1 para ignorar o cabeçalho
+            var tds = trs[i].getElementsByTagName("td");
+            var show = false;
+            for (var j = 0; j < tds.length; j++) {
+                if (tds[j].innerText.toLowerCase().indexOf(filter) > -1) {
+                    show = true;
+                    break;
+                }
+            }
+            trs[i].style.display = show ? "" : "none";
+        }
+    }
+</script>

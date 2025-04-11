@@ -1,0 +1,30 @@
+﻿@model ProjetoContabilidade.Models.Empresa
+@{
+    ViewData["Title"] = "Cadastrar Empresa";
+}
+
+<h2>Cadastrar Empresa</h2>
+
+<form asp-action="Create" method="post" class="w-50">
+    <div class="form-group mb-3">
+        <label asp-for="RazaoSocial" class="form-label">Razão Social</label>
+        <input asp-for="RazaoSocial" class="form-control" />
+        <span asp-validation-for="RazaoSocial" class="text-danger"></span>
+    </div>
+    <div class="form-group mb-3">
+        <label asp-for="CNPJ" class="form-label">CNPJ</label>
+        <input asp-for="CNPJ" class="form-control" />
+        <span asp-validation-for="CNPJ" class="text-danger"></span>
+    </div>
+    <div class="form-group mb-3">
+        <label asp-for="Endereco" class="form-label">Endereço</label>
+        <input asp-for="Endereco" class="form-control" />
+        <span asp-validation-for="Endereco" class="text-danger"></span>
+    </div>
+    <div class="form-group mb-3">
+        <label asp-for="ContadorId" class="form-label">Contador Responsável</label>
+        <select asp-for="ContadorId" class="form-control" asp-items="ViewBag.Contadores"></select>
+        <span asp-validation-for="ContadorId" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-success">Salvar</button>
+</form>

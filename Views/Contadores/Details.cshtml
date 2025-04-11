@@ -1,0 +1,55 @@
+﻿@model ProjetoContabilidade.Models.Contador
+@{
+    ViewData["Title"] = "Detalhes do Contador";
+}
+
+<h2>@Model.Nome</h2>
+<p>
+    <strong>CPF:</strong> @Model.CPF
+</p>
+
+<hr />
+
+<h3>Empresas Vinculadas</h3>
+<div class="mb-3">
+    <input type="text" class="form-control" id="pesquisaEmpresas" placeholder="Pesquisar empresas..." onkeyup="filterTable('pesquisaEmpresas', 'tabelaEmpresas')">
+</div>
+<table class="table table-striped" id="tabelaEmpresas">
+    <thead>
+        <tr>
+            <th>Razão Social</th>
+            <th>CNPJ</th>
+            <th>Endereço</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var emp in Model.Empresas ?? new List<ProjetoContabilidade.Models.Empresa>())
+        {
+            <tr>
+                <td>@emp.RazaoSocial</td>
+                <td>@emp.CNPJ</td>
+                <td>@emp.Endereco</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    function filterTable(inputId, tableId) {
+        var input = document.getElementById(inputId);
+        var filter = input.value.toLowerCase();
+        var table = document.getElementById(tableId);
+        var trs = table.getElementsByTagName("tr");
+        for (var i = 1; i < trs.length; i++) { // pula o cabeçalho
+            var tds = trs[i].getElementsByTagName("td");
+            var show = false;
+            for (var j = 0; j < tds.length; j++) {
+                if (tds[j].textContent.toLowerCase().indexOf(filter) > -1) {
+                    show = true;
+                    break;
+                }
+            }
+            trs[i].style.display = show ? "" : "none";
+        }
+    }
+</script>

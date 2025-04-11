@@ -1,0 +1,15 @@
+﻿# Ignore arquivos e pastas do Visual Studio
+.vs/
+*.user
+*.suo
+
+# Pastas de build
+bin/
+obj/
+
+# Configurações locais
+appsettings.Development.json
+
+# Outras extensões
+*.log
+*.DS_Store
